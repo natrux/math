@@ -10,6 +10,14 @@ TEST_CASE("vector angle"){
 }
 
 
+TEST_CASE("cross product"){
+	const math::Vector3i v1 = {4, -3, 9};
+	const math::Vector3i v2 = {7, 12, -1};
+	const math::Vector3i result = {-105, 67, 69};
+	CHECK(v1.crossed(v2) == result);
+}
+
+
 TEST_CASE("cross product matrix"){
 	const math::Vector3i cross_1 = {3, 5, 11};
 	const math::Vector3i cross_2 = {23, 42, -99};

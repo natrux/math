@@ -346,10 +346,11 @@ public:
 	void cross(const Matrix &other){
 		static_assert(Rows==3, "Only available in 3 dimensions");
 		for(size_t j=0; j<Cols; j++){
-			Matrix<T, Rows, 1> col = {};
-			for(size_t i=0; i<Rows; i++){
-				col(i, 0) = (*this)((i+1)%Rows, j)*other((i+2)%Rows, j) - (*this)((i+2)%Rows, j)*other((i+1)%Rows, j);
-			}
+			const Matrix<T, Rows, 1> col = {
+				(*this)(1, j)*other(2, j) - (*this)(2, j)*other(1, j),
+				(*this)(2, j)*other(0, j) - (*this)(0, j)*other(2, j),
+				(*this)(0, j)*other(1, j) - (*this)(1, j)*other(0, j),
+			};
 			set(0, j, col);
 		}
 	}
@@ -363,11 +364,11 @@ public:
 	Matrix<T, Rows, Rows> crossed() const{
 		static_assert(Rows==3, "Only available in 3 dimensions");
 		static_assert(Cols==1, "Only available for vectors");
-		Matrix<T, Rows, Rows> result;
-		for(size_t i=0; i<Rows; i++){
-			result(i, (i+2)%Rows) = (*this)((i+1)%Rows, 0);
-			result(i, (i+1)%Rows) = -(*this)((i+2)%Rows, 0);
-		}
+		const Matrix<T, Rows, Rows> result = {
+			0, -(*this)[2], (*this)[1],
+			(*this)[2], 0, -(*this)[0],
+			-(*this)[1], (*this)[0], 0,
+		};
 		return result;
 	}
 
