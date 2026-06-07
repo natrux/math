@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Install CMake
-        run: sudo apt update && sudo apt install cmake
       - name: Install Catch2 from Source
         run: |
           git clone https://github.com/catchorg/Catch2
