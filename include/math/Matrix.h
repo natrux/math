@@ -405,49 +405,55 @@ public:
 	// Transforms the matrix into upper triangular form by linear transformations.
 	// Returns the factor of the effect on the determinant.
 	T gauss_jordan_upper(){
-		static_assert(Cols >= Rows, "Cols < Rows");
 		T factor = one;
-		for(size_t step=0; step<Rows; step++){
-			size_t nonzero_col = step;
-			size_t nonzero_row = step;
-			for(nonzero_col=step; nonzero_col<Rows; nonzero_col++){
-				for(nonzero_row=step; nonzero_row<Rows; nonzero_row++){
-					if((*this)(nonzero_col, nonzero_row) != zero){
-						break;
-					}
-				}
-				if(nonzero_row < Rows){
-					break;
-				}
-			}
-			if(nonzero_col < Rows && nonzero_row < Rows){
-				if(nonzero_row > step){
-					swap_rows(step, nonzero_row);
-					factor = -factor;
-				}
-				const auto row = get_row(step);
-				for(size_t lower=step+1; lower<Rows; lower++){
-					factor *= eliminate(lower, nonzero_col, row);
+		size_t step_row = 0;
+		size_t step_col = 0;
+		while(step_row < Rows && step_col < Cols){
+			size_t pivot_row = step_row;
+			T pivot = (*this)(pivot_row, step_col);
+			for(size_t i=pivot_row+1; i<Rows; i++){
+				const T candidate = (*this)(i, step_col);
+				if(std::abs(candidate) > std::abs(pivot)){
+					pivot_row = i;
+					pivot = candidate;
 				}
 			}
+			if(pivot == zero){
+				step_col++;
+				continue;
+			}
+			if(pivot_row > step_row){
+				swap_rows(pivot_row, step_row);
+				factor = -factor;
+			}
+			const auto row = get_row(step_row);
+			for(size_t lower=step_row+1; lower<Rows; lower++){
+				factor *= eliminate(lower, step_col, row);
+			}
+			step_row++;
+			step_col++;
 		}
 		return factor;
 	}
 
-	// Completes gaussian eleminination, left square matrix will be diagonal.
+	// Completes gaussian eliminination and transforms the matrix into row-echelon form.
 	// Assumes that the matrix is already in upper triangular form, like after calling gauss_jordan_upper().
 	// Returns the factor of the effect on the determinant.
 	T gauss_jordan_lower(){
-		static_assert(Cols >= Rows, "Cols < Rows");
 		T factor = one;
-		for(size_t step=0; step<Rows; step++){
-			if((*this)(step, step) == zero){
+		size_t step_row = 0;
+		size_t step_col = 0;
+		while(step_row < Rows && step_col < Cols){
+			if((*this)(step_row, step_col) == zero){
+				step_col++;
 				continue;
 			}
-			const auto row = get_row(step);
-			for(size_t upper=step; upper>0; upper--){
-				factor *= eliminate(upper-1, step, row);
+			const auto row = get_row(step_row);
+			for(size_t upper=0; upper<step_row; upper++){
+				factor *= eliminate(upper, step_col, row);
 			}
+			step_row++;
+			step_col++;
 		}
 		return factor;
 	}

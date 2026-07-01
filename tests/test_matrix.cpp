@@ -36,7 +36,7 @@ TEST_CASE("determinants and inversions"){
 		const math::Matrix<int, 0, 0> m0_int = m0;
 		const auto m0_1 = m0.inverse();
 		CHECK(m0.determinant() == 1);
-		CHECK(m0_int.determinant() == m0.determinant());
+		CHECK(m0_int.determinant() == 1);
 		CHECK(m0 * m0_1 == id0);
 	}
 	SECTION("1x1"){
@@ -46,7 +46,7 @@ TEST_CASE("determinants and inversions"){
 		const math::Matrix<int, 1, 1> m1_int = m1;
 		const auto m1_1 = m1.inverse();
 		CHECK(m1.determinant() == 5);
-		CHECK(m1_int.determinant() == m1.determinant());
+		CHECK(m1_int.determinant() == 5);
 		CHECK_THAT((m1 * m1_1 - id1).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
 	}
 	SECTION("2x2"){
@@ -56,7 +56,7 @@ TEST_CASE("determinants and inversions"){
 		};
 		const math::Matrix<int, 2, 2> m2_int = m2;
 		const auto m2_1 = m2.inverse();
-		CHECK(m2.determinant() == -2);
+		CHECK_THAT(m2.determinant(), Catch::Matchers::WithinAbs(-2, 1e-10));
 		CHECK(m2_int.determinant() == m2.determinant());
 		CHECK_THAT((m2 * m2_1 - id2).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
 	}
@@ -68,8 +68,8 @@ TEST_CASE("determinants and inversions"){
 		};
 		const math::Matrix<int, 3, 3> m3_int = m3;
 		const auto m3_1 = m3.inverse();
-		CHECK(m3.determinant() == 4);
-		CHECK(m3_int.determinant() == m3.determinant());
+		CHECK_THAT(m3.determinant(), Catch::Matchers::WithinAbs(4, 1e-10));
+		CHECK(m3_int.determinant() == 4);
 		CHECK_THAT((m3 * m3_1 - id3).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
 	}
 	SECTION("4x4"){
@@ -81,8 +81,8 @@ TEST_CASE("determinants and inversions"){
 		};
 		const math::Matrix<int, 4, 4> m4_int = m4;
 		const auto m4_1 = m4.inverse();
-		CHECK(m4.determinant() == -16);
-		CHECK(m4_int.determinant() == m4.determinant());
+		CHECK_THAT(m4.determinant(), Catch::Matchers::WithinAbs(-16, 1e-10));
+		CHECK(m4_int.determinant() == -16);
 		CHECK_THAT((m4 * m4_1 - id4).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
 	}
 	SECTION("5x5"){
@@ -95,8 +95,8 @@ TEST_CASE("determinants and inversions"){
 		};
 		const math::Matrix<int, 5, 5> m5_int = m5;
 		const auto m5_1 = m5.inverse();
-		CHECK(m5.determinant() == 1);
-		CHECK(m5_int.determinant() == m5.determinant());
+		CHECK_THAT(m5.determinant(), Catch::Matchers::WithinAbs(1, 1e-10));
+		CHECK(m5_int.determinant() == 1);
 		CHECK_THAT((m5 * m5_1 - id5).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
 	}
 	SECTION("6x6"){
@@ -110,8 +110,8 @@ TEST_CASE("determinants and inversions"){
 		};
 		const math::Matrix<int, 6, 6> m6_int = m6;
 		const auto m6_1 = m6.inverse();
-		CHECK(m6.determinant() == 128);
-		CHECK(m6_int.determinant() == m6.determinant());
+		CHECK_THAT(m6.determinant(), Catch::Matchers::WithinAbs(128, 1e-10));
+		CHECK(m6_int.determinant() == 128);
 		CHECK_THAT((m6 * m6_1 - id6).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
 	}
 }
