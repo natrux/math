@@ -126,3 +126,29 @@ TEST_CASE("rotation equivalences"){
 }
 
 
+TEST_CASE("Geometry Edge Cases") {
+	const auto id4 = math::Matrix<double, 4, 4>::I();
+
+	SECTION("Zero rotation axis extraction") {
+		math::Matrix3d identity3 = math::Matrix3d::I();
+		math::Vector3d axis = math::get_axis(identity3);
+		CHECK_THAT(axis.norm(), Catch::Matchers::WithinAbs(0, 1e-10));
+	}
+
+	SECTION("Quaternion Exception Boundary") {
+		math::Vector3d invalid_quat = {1.0, 1.0, 1.0};
+		CHECK_THROWS_AS(math::rotate3_quaternion(invalid_quat), std::logic_error);
+	}
+
+	SECTION("Identity Quaternion Conversion") {
+		math::Vector4d identity_quat4 = {1.0, 0.0, 0.0, 0.0};
+		auto R4 = math::rotate3_quaternion(identity_quat4);
+		CHECK_THAT((R4 - id4).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
+
+		math::Vector3d identity_quat3 = {0.0, 0.0, 0.0};
+		auto R3 = math::rotate3_quaternion(identity_quat3);
+		CHECK_THAT((R3 - id4).norm(), Catch::Matchers::WithinAbs(0, 1e-10));
+	}
+}
+
+

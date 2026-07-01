@@ -136,3 +136,34 @@ TEST_CASE("equation systems"){
 	);
 }
 
+
+TEST_CASE("Matrix Error States & Integer Gauss-Jordan") {
+	SECTION("Singular Matrix Inverse Detection") {
+		math::Matrix2d singular = {
+			1.0, 2.0,
+			2.0, 4.0
+		};
+		CHECK_FALSE(singular.is_invertible());
+		CHECK_THROWS_AS(singular.inverse(), std::logic_error);
+	}
+
+	SECTION("Index Bounds Validation") {
+		math::Matrix2d valid;
+		CHECK_THROWS_AS(valid(2, 0), std::logic_error);
+		CHECK_THROWS_AS(valid[4], std::logic_error);
+	}
+
+	SECTION("Integer Matrix Elimination Precision") {
+		math::Matrix<int, 2, 2> int_matrix = {
+			3, 4,
+			2, 3
+		};
+		int_matrix.gauss_jordan();
+
+		CHECK(int_matrix(0, 0) != 0);
+		CHECK(int_matrix(0, 1) == 0);
+		CHECK(int_matrix(1, 0) == 0);
+		CHECK(int_matrix(1, 1) != 0);
+	}
+}
+
