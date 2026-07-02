@@ -167,3 +167,14 @@ TEST_CASE("Matrix Error States & Integer Gauss-Jordan") {
 	}
 }
 
+
+TEST_CASE("Linear interpolation"){
+	const math::Vector4d first = {1, 2, 3, 4};
+	const math::Vector4d second = {44, 33, 22, 11};
+	const math::Vector4d mid = first.linear_interpolated(second, 0.2);
+	CHECK_THAT(mid.x(), Catch::Matchers::WithinAbs(9.6, 1e-10));
+	CHECK_THAT(mid.y(), Catch::Matchers::WithinAbs(8.2, 1e-10));
+	CHECK_THAT(mid.z(), Catch::Matchers::WithinAbs(6.8, 1e-10));
+	CHECK_THAT(mid.w(), Catch::Matchers::WithinAbs(5.4, 1e-10));
+}
+

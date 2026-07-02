@@ -152,3 +152,25 @@ TEST_CASE("Geometry Edge Cases") {
 }
 
 
+TEST_CASE("Matrix SLERP diagonal rotation"){
+	const math::Vector3d axis = math::Vector3d({1.0, 1.0, 1.0}).normalized();
+
+	const math::Matrix3d A = math::Matrix3d::I();
+	const double total_angle = M_PI / 2.0;
+	const math::Matrix3d B = math::rotation3_axis(axis, total_angle);
+
+	const double expected_angle = total_angle * 0.5;
+	const math::Matrix3d expected_midpoint = math::rotation3_axis(axis, expected_angle);
+
+	const math::Matrix3d result_midpoint = math::rotation_interpolated(A, B, 0.5);
+
+	const double error_norm = (result_midpoint - expected_midpoint).norm();
+	CHECK_THAT(error_norm, Catch::Matchers::WithinAbs(0.0, 1e-10));
+
+	const math::Matrix3d result_start = math::rotation_interpolated(A, B, 0.0);
+	const math::Matrix3d result_end = math::rotation_interpolated(A, B, 1.0);
+	CHECK_THAT((result_start - A).norm(), Catch::Matchers::WithinAbs(0.0, 1e-10));
+	CHECK_THAT((result_end - B).norm(), Catch::Matchers::WithinAbs(0.0, 1e-10));
+}
+
+

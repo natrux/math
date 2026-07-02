@@ -223,10 +223,10 @@ template<class T>
 Matrix3d rotation3_axis(const Vector3<T> &axis_angle){
 	const auto phi = axis_angle.norm();
 	if(phi < 1e-6){
-		return Matrix4<T>::I();
+		return Matrix3<T>::I();
 	}
 	const auto axis = axis_angle / phi;
-	return rotation3_axis(axis, phi);
+	return rotation3_axis<T>(axis, phi);
 }
 
 
@@ -299,6 +299,25 @@ Vector3<T> get_axis(const Matrix3<T> &rotation){
 template<class T>
 Vector3<T> get_axis(const Matrix4<T> &transform){
 	return get_axis(transform.template get<3, 3>(0, 0));
+}
+
+template<class T>
+Matrix3<T> rotation_interpolated(const Matrix3<T> &first, const Matrix3<T> &second, double t){
+	const auto relative = first.inverse() * second;
+	const auto axis_angle = get_axis(relative);
+	const auto R = rotation3_axis<T>(t * axis_angle);
+	return first * R;
+}
+
+template<class T>
+Matrix4<T> transform_interpolated(const Matrix4<T> &first, const Matrix4<T> &second, double t){
+	const auto rot = rotation_interpolated(first.template get<3, 3>(0, 0), second.template get<3, 3>(0, 0), t);
+	const auto trans = first.template get<3, 1>(0, 3).linear_interpolated(second.template get<3, 1>(0, 3), t);
+	Matrix4<T> result;
+	result.set(0, 0, rot);
+	result.set(0, 3, trans);
+	result(3, 3) = 1;
+	return result;
 }
 
 

@@ -321,6 +321,18 @@ public:
 		return result;
 	}
 
+	void linear_interpolate(const Matrix &other, double t){
+		for(size_t i=0; i<Rows*Cols; i++){
+			data[i] = static_cast<T>((1 - t) * data[i] + t * other.data[i]);
+		}
+	}
+
+	Matrix linear_interpolated(const Matrix &other, double t) const{
+		Matrix result = *this;
+		result.linear_interpolate(other, t);
+		return result;
+	}
+
 	Matrix<T, Cols, Rows> transposed() const{
 		Matrix<T, Cols, Rows> result = {};
 		for(size_t i=0; i<Rows; i++){
